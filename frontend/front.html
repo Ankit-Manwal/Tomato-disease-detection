@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #image-preview {
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Classifier</h1>
+    <input type="file" id="file-input" accept=".jpg, .jpeg, .JPG, .JPEG, .png, .gif, .bmp" />
+    <button onclick="uploadImage()">Upload</button>
+    <div id="image-preview"></div>
+    <div id="result"></div>
+    <div id="error-message" class="error-message"></div>
+
+    <script>
+        function uploadImage() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('http://localhost:8000/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+      
+                    // Display prediction result
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `<p>Class: ${data.class}</p><p>Confidence: ${data.confidence}</p>`;
+                    document.getElementById('error-message').innerText = ''; // Clear error message
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                    document.getElementById('error-message').innerText = 'Error: Failed to upload image';
+                });
+            } else {
+                document.getElementById('error-message').innerText = 'Error: No file selected';
+            }
+        }
+    </script>
+</body>
+</html>
