@@ -1,5 +1,4 @@
 # Tomato-disease-detection
-# Tomato Disease Detection
 
 ## Overview
 This project aims to detect diseases in tomato plants using deep learning techniques. It includes a FastAPI backend for serving predictions and a simple frontend for uploading images and displaying the predicted disease and confidence.
