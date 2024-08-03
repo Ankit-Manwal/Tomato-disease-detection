@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Classifier</title>
+    <title>Tomato Disease Detector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
+            background-image: url("image_background.jpg");
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
         }
-        #image-preview {
+
+        #image-preview img {
             max-width: 400px;
             margin: 20px auto;
         }
@@ -21,17 +26,48 @@
             color: red;
             margin-top: 10px;
         }
+        h1 {
+        color: #ff6347; /* Tomato color for text */
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px #ffa07a; /* Light salmon color for shadow */
+        text-align: center; /* Center align the text */
+        padding: 10px; /* Add some padding for better spacing */
+        border: 2px solid #ffa07a; /* Light salmon border */
+        border-radius: 10px; /* Rounded corners */
+        background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+       }
+       p{
+        font-size: 2.4em;
+        background-color: rgba(255, 255, 255, 0.7);
+        margin-left: 33%;
+        margin-right: 33%;
+       }
     </style>
 </head>
 <body>
-    <h1>Image Classifier</h1>
+    <div class="container">
+    <h1>Tomato Disease Detector</h1>
     <input type="file" id="file-input" accept=".jpg, .jpeg, .JPG, .JPEG, .png, .gif, .bmp" />
-    <button onclick="uploadImage()">Upload</button>
-    <div id="image-preview"></div>
+    <button onclick="uploadImage()">PREDICT</button>
+    <div id="image-preview"><img id="preview-img" src="" alt=""></div>
     <div id="result"></div>
     <div id="error-message" class="error-message"></div>
+</div>
 
     <script>
+        document.getElementById('file-input').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.getElementById('preview-img');
+                    previewImg.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
         function uploadImage() {
             const fileInput = document.getElementById('file-input');
             const file = fileInput.files[0];
@@ -50,10 +86,9 @@
                     return response.json();
                 })
                 .then(data => {
-      
                     // Display prediction result
                     const resultDiv = document.getElementById('result');
-                    resultDiv.innerHTML = `<p>Class: ${data.class}</p><p>Confidence: ${data.confidence}</p>`;
+                    resultDiv.innerHTML = `<p>Class: ${data.class}</p><p>Confidence: ${data.confidence}%</p>`;
                     document.getElementById('error-message').innerText = ''; // Clear error message
                 })
                 .catch(error => {
